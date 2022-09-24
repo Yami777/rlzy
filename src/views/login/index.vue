@@ -53,6 +53,7 @@
 </template>
 
 <script>
+// 开发环境：'/api'
 import { validUsername } from '@/utils/validate'
 
 export default {
