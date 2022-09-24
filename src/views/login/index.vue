@@ -144,6 +144,8 @@ $cursor: #fff;
 
 /* reset element-ui css */
 .login-container {
+   background-image: url('~@/assets/common/login.jpg'); // 设置背景图片
+  background-position: center; // 将图片位置设置为充满整个屏幕
   .el-input {
     display: inline-block;
     height: 47px;
