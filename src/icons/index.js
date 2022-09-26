@@ -8,7 +8,7 @@ Vue.component('svg-icon', SvgIcon)
 const req = require.context('./svg', false, /\.svg$/)
 // console.log(req)// 函数
 // console.log(req.keys())
-console.log(req('./dashboard.svg'))
+// console.log(req('./dashboard.svg'))
 // 导出所有模块
 const requireAll = requireContext => requireContext.keys().map(requireContext)
 // map返回一个新数组，映射
