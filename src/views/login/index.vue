@@ -98,6 +98,7 @@ export default {
       loading: false
     }
   },
+
   methods: {
     showPwd() {
       this.passwordType = this.passwordType === 'password' ? '' : 'password'
