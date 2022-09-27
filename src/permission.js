@@ -9,7 +9,7 @@ router.beforeEach(async(to, from, next) => {
   // 1、判断token是否存在
   // 1.1、存在，是否去往登录页，如果是，跳转到首页，如果是跳转到其他页面，则放行
   // 1.2 不存在 判断是否在白名单，如果在，放行，如果不在跳转到登录页
-
+// 获取用户信息
   if (store.getters.token) {
     if (!store.getters.userId) {
       await store.dispatch('user/getUserInfo')
