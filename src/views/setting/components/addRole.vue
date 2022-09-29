@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-dialog
-      title="新增角色"
+      :title="title"
       width="60%"
       :visible.sync="dialogVisible"
       :before-close="handleClose"
@@ -36,7 +36,7 @@
 </template>
 
 <script>
-import { addRole } from '@/api/setting'
+import { addRole, updateRole } from '@/api/setting'
 export default {
   name: 'AddRole',
   props: {
@@ -52,20 +52,30 @@ export default {
         description: ''
       },
       loading: false
+
+    }
+  },
+  computed: {
+    title() {
+      return this.formData.id ? '编辑角色' : '新增角色'
     }
   },
   methods: {
     handleClose() {
       this.$emit('update:dialogVisible', false)
-      this.$refs.roleDialogForm.resetFields()
+      this.$refs.roleDialogForm.resetFields()// 重置表单值为初始值
+      this.formData = {
+        name: '',
+        description: ''
+      }
     },
     async submit() {
       try {
         await this.$refs.roleDialogForm.validate()
         this.loading = true
-        await addRole(this.formData)
+        this.formData.id ? await updateRole(this.formData) : await addRole(this.formData)
         this.$emit('refreshList')
-        this.$message.success('新增成功')
+        this.$message.success(this.formData.id ? '编辑成功' : '新增成功')
         this.handleClose()
       } catch (error) {
         console.log(error)
