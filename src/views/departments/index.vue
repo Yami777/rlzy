@@ -1,32 +1,38 @@
 <template>
   <div class="departments-container">
     <el-card>
-      <tree-tools :tree-node="company" :is-root="false" />
+      <tree-tools :tree-node="company" :is-root="false" @addDept="handleAddDept" />
     </el-card>
     <!-- 内容展示区域 -->
     <el-tree :data="departs" :props="defaultProps" :default-expand-all="true">
-      <tree-tools slot-scope="{ data }" :tree-node="data" />
+      <tree-tools slot-scope="{ data }" :tree-node="data" @addDept="handleAddDept" />
     </el-tree>
+    <add-dept :dialog-visible.sync="dialogVisible" :tree-node="currentNode" />
   </div>
+
 </template>
 
 <script>
 import { getDepartments } from '@/api/departments.js'
 import TreeTools from './components/tree-tools.vue'
+import { tranListToTreeData } from '@/utils'
+import AddDept from './components/add-dept.vue'
 export default {
   name: 'HrsaasIndex',
   components: {
-    TreeTools
+    TreeTools,
+    AddDept
   },
+
   data() {
     return {
       defaultProps: {
         label: 'name'
       },
-      departs: [{ name: '总裁办', manager: '曹操', children: [{ name: '董事会', manager: '曹丕' }] },
-        { name: '行政部', manager: '刘备' },
-        { name: '人事部', manager: '孙权' }],
-      company: { name: '江苏传智播客教育科技股份有限公司', manager: '负责人' }
+      departs: [],
+      company: { name: '江苏传智播客教育科技股份有限公司', manager: '负责人' },
+      dialogVisible: false,
+      currentNode: {}
     }
   },
 
@@ -36,9 +42,17 @@ export default {
 
   methods: {
     async getDepartments() {
-      const res = await getDepartments()
-      console.log(res)
+      const { depts, companyName, companyManage } = await getDepartments()
+      this.departs = tranListToTreeData(depts, '')
+      this.company = { name: companyName, manager: companyManage, id: ''
+      }
+    },
+    handleAddDept(node) {
+      this.dialogVisible = true
+      this.currentNode = node
+      // console.log(node)
     }
+
   }
 }
 </script>
