@@ -4,9 +4,9 @@
       <el-col v-if="showBefore">
         <div :class="`before ${type}`">
           <i :class="`el-icon-${type}`" />
-          <span>共25条记录</span>
+          <!-- <span>共25条记录</span> -->
           <!-- 具名插槽 -->
-          <!-- <slot name="before" /> -->
+          <slot name="before" />
           <!-- 作用域插槽 -->
           <!-- <slot aa="11">555</slot> -->
         </div>
