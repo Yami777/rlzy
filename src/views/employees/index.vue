@@ -17,9 +17,9 @@
         <span>共25条记录{{ }}</span>
       </template> -->
       <template #after>
-        <el-button size="small" type="warning">导入</el-button>
+        <el-button size="small" type="warning" @click="$router.push('/import')">导入</el-button>
         <el-button size="small" type="danger">导出</el-button>
-        <el-button size="small" type="primary">新增员工</el-button>
+        <el-button size="small" type="primary" @click="handleEmploy">新增员工</el-button>
       </template>
     </page-tools>
 
@@ -43,13 +43,13 @@
           </template>
         </el-table-column>
         <el-table-column label="操作" fixed="right" width="280">
-          <template>
+          <template slot-scope="{row}">
             <el-button type="text" size="small">查看</el-button>
             <el-button type="text" size="small">转正</el-button>
             <el-button type="text" size="small">调岗</el-button>
             <el-button type="text" size="small">离职</el-button>
             <el-button type="text" size="small">角色</el-button>
-            <el-button type="text" size="small">删除</el-button>
+            <el-button type="text" size="small" @click="del(row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -66,18 +66,22 @@
         />
       </el-row>
     </el-card>
+    <!-- 新增员工 -->
+    <add-employee :dialog-visible.sync="dialogVisible" />
   </div>
 </template>
 
 <script>
 // import PageTools from '@/components/PageTools'
-import { getEmployeeList } from '@/api/employees'
+import { getEmployeeList, delEmployee } from '@/api/employees'
 import EnumHireType from '@/api/constant/employees'
+import AddEmployee from './components/add-employee.vue'
 // console.log(EnumHireType)
 export default {
   name: 'HrsaasIndex',
   components: {
     // PageTools
+    AddEmployee
   },
   data() {
     return {
@@ -88,7 +92,8 @@ export default {
       list: [],
       total: 0,
       loading: false,
-      hireType: EnumHireType.hireType
+      hireType: EnumHireType.hireType,
+      dialogVisible: false
     }
   },
   created() {
@@ -114,7 +119,24 @@ export default {
       // console.log(row, column, cellValue, index)
       const res = this.hireType.find(ele => ele.id === cellValue)
       // console.log(res)
-      return res.value
+      return res && res.value || '非正式'
+    },
+    handleEmploy() {
+      this.dialogVisible = true
+    },
+    async  del(val) {
+      try {
+        await this.$confirm('确定删除该人员吗？', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        })
+        await delEmployee(val.id)
+        this.getEmployeeList()
+        this.$message.success('删除成功')
+      } catch (e) {
+        console.log(e)
+      }
     }
   }
 }

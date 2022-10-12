@@ -7,11 +7,14 @@
         <navbar />
       </div>
       <app-main />
+
     </div>
+
   </div>
 </template>
 
 <script>
+
 import { Navbar, Sidebar, AppMain } from './components'
 import ResizeMixin from './mixin/ResizeHandler'
 
@@ -46,6 +49,7 @@ export default {
     handleClickOutside() {
       this.$store.dispatch('app/closeSideBar', { withoutAnimation: false })
     }
+
   }
 }
 </script>
