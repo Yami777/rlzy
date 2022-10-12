@@ -18,7 +18,7 @@
       </template> -->
       <template #after>
         <el-button size="small" type="warning" @click="$router.push('/import')">导入</el-button>
-        <el-button size="small" type="danger">导出</el-button>
+        <el-button size="small" type="danger" @click="exportExcel">导出</el-button>
         <el-button size="small" type="primary" @click="handleEmploy">新增员工</el-button>
       </template>
     </page-tools>
@@ -111,6 +111,10 @@ export default {
         // console.log(rows, total)
         this.list = rows
         this.total = total
+        if (total > 0 && rows.length === 0) {
+          --this.page.page
+          this.getEmployeeList()
+        }
       } finally {
         this.loading = false
       }
@@ -137,6 +141,39 @@ export default {
       } catch (e) {
         console.log(e)
       }
+    },
+    async exportExcel() {
+      // 文件懒加载，当点击导出的时候再加载依赖，按需导入当做函数使用的时候返回值是一个promise
+      const { export_json_to_excel } = await import ('@/vendor/Export2Excel.js')
+      const { rows } = await getEmployeeList({ page: 1, size: this.total })
+      const headers = {
+        '姓名': 'username',
+        '手机号': 'mobile',
+        '入职日期': 'timeOfEntry',
+        '聘用形式': 'formOfEmployment',
+        '转正日期': 'correctionTime',
+        '工号': 'workNumber',
+        '部门': 'departmentName'
+      }
+      const header = Object.keys(headers)
+      const data = rows.map(item => {
+        return header.map(h => {
+          if (h === '聘用形式') {
+            const find = this.hireType.find(hire => hire.id === item[headers[h]])
+            return find ? find.value : '未知'
+          }
+          return item[headers[h]]
+        })
+      })
+      export_json_to_excel({
+        header, // 表头 必填
+        multiHeader: [['姓名', '主要信息', '', '', '', '其他信息', '']],
+        merges: ['A1:A2', 'B1:E1', 'F1:G1'],
+        data, // 具体数据 必填
+        filename: 'excel-list', // 非必填
+        autoWidth: true, // 非必填
+        bookType: 'xlsx' // 非必填
+      })
     }
   }
 }
