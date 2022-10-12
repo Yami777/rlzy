@@ -45,3 +45,12 @@ export function importEmployee(data) {
     data
   })
 }
+
+/** *
+ *  读取用户详情的基础信息
+ * **/
+export function getPersonalDetail(id) {
+  return request({
+    url: `/employees/${id}/personalInfo`
+  })
+}
