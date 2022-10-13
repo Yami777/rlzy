@@ -2,7 +2,7 @@
   <div class="dashboard-container">
     <div class="app-container">
       <el-card class="box-card">
-        <el-tabs v-model="activeName">
+        <el-tabs v-model="activeName" @tab-click="tabClick">
           <el-tab-pane label="登录账户设置" name="first">
             <!-- 放置表单 -->
             <el-form
@@ -39,6 +39,7 @@
 import UserInfo from './components/user-info.vue'
 import JobInfo from './components/job-info.vue'
 import { getUserDetailById, saveUserDetailById } from '@/api/user'
+import Cookies from 'js-cookie'
 export default {
   components: {
     UserInfo,
@@ -46,7 +47,7 @@ export default {
   },
   data() {
     return {
-      activeName: 'first',
+      activeName: Cookies.get('activeName') || 'first',
       accountInfo: {},
       rules: {
         username: [{ required: true, message: '请输入用户名', trigger: 'blur' },
@@ -72,6 +73,9 @@ export default {
       } catch (err) {
         console.log(err)
       }
+    },
+    tabClick() {
+      Cookies.set('activeName', this.activeName)
     }
 
   }

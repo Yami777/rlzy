@@ -20,6 +20,11 @@ export const getUserDetailById = (id) => {
     url: `/sys/user/${id}`
   })
 }
+/**
+ * 保存用户信息
+ * @param {*} data
+ * @returns
+ */
 export const saveUserDetailById = (data) => {
   return request({
     url: `/sys/user/${data.id}`,
@@ -27,3 +32,4 @@ export const saveUserDetailById = (data) => {
     data
   })
 }
+
