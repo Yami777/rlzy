@@ -1,5 +1,13 @@
 <template>
   <div class="user-info">
+    <div style="height:50px;">
+      <div style="float:right">
+        <i
+          class="el-icon-printer"
+          @click="$router.push('/employees/print/'+userId+'?type=personal')"
+        />
+      </div>
+    </div>
     <!-- 个人信息 -->
     <el-form label-width="220px">
       <!-- 工号 入职时间 -->
@@ -57,6 +65,11 @@
       <el-row class="inline-info">
         <el-col :span="12">
           <el-form-item label="员工头像">
+            <upload-img
+              ref="updateAvatar"
+              :default-url="employeesAvatar"
+              @on-success="updateAvatarSuccess"
+            />
             <!-- 放置上传图片 -->
           </el-form-item>
         </el-col>
@@ -91,6 +104,11 @@
 
         <el-form-item label="员工照片">
           <!-- 放置上传图片 -->
+          <upload-img
+            ref="uploadPic"
+            :default-url="employeesPhoto"
+            @on-success="uploadPicSuccess"
+          />
         </el-form-item>
         <el-form-item label="国家/地区">
           <el-select v-model="formData.nationalArea" class="inputW2">
@@ -457,7 +475,9 @@ export default {
         isThereAnyCompetitionRestriction: '', // 有无竞业限制
         proofOfDepartureOfFormerCompany: '', // 前公司离职证明
         remarks: '' // 备注
-      }
+      },
+      employeesAvatar: '',
+      employeesPhoto: ''
     }
   },
   created() {
@@ -468,26 +488,44 @@ export default {
     async  getUserDetail() {
       const res = await getUserDetailById(this.userId)
       this.userInfo = res
+      if (res.staffPhoto) {
+        this.employeesAvatar = res.staffPhoto
+      }
     },
     async getPersonalDetail() {
       const res = await getPersonalDetail(this.userId)
       this.formData = res
+      if (res.staffPhoto) {
+        this.employeesPhoto = res.staffPhoto
+      }
     },
     async saveEmployeesInfo() {
       try {
+        if (this.$refs.uploadPic.loading) {
+          return this.$message.error('头像上传中')
+        }
         await saveEmployeesInfo(this.formData)
-        this.$message.success('更新成功')
-      } catch (err) {
-        this.$message.fail('更新失败')
-      }
-    },
-    async  saveUserInfo() {
-      try {
-        await saveUserDetailById(this.userInfo)
         this.$message.success('更新成功')
       } catch (err) {
         this.$message.error('更新失败')
       }
+    },
+    async  saveUserInfo() {
+      try {
+        if (this.$refs.updateAvatar.loading) {
+          return this.$message.error('头像上传中')
+        }
+        await saveUserDetailById(this.userInfo)
+        this.$message.success('更新用户信息成功')
+      } catch (err) {
+        this.$message.error('更新用户信息失败')
+      }
+    },
+    updateAvatarSuccess(val) {
+      this.userInfo.staffPhoto = val.imgUrl
+    },
+    uploadPicSuccess(val) {
+      this.formData.staffPhoto = val.imgUrl
     }
   }
 }

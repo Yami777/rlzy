@@ -1,7 +1,8 @@
 <template>
   <div class="dashboard-container">
-    <div class="dashboard-text">name: {{ name }}</div>
-
+    <!-- <div class="dashboard-text">name: {{ name }}</div> -->
+    <upload-img @on-success="OnSuccess1" />
+    <upload-img @on-success="OnSuccess2" />
   </div>
 </template>
 
@@ -14,6 +15,14 @@ export default {
     ...mapGetters([
       'name'
     ])
+  },
+  methods: {
+    OnSuccess1(val) {
+      console.log('第一个', val)
+    },
+    OnSuccess2(val) {
+      console.log('第二个', val)
+    }
   }
 
 }

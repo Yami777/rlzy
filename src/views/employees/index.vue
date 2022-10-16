@@ -27,6 +27,20 @@
     <el-card>
       <el-table v-loading="loading" border :data="list">
         <el-table-column label="序号" sortable="" width="80" type="index" />
+        <el-table-column
+          label="头像"
+          prop="staffPhoto"
+          width="150"
+        >
+          <template slot-scope="{row}">
+            <img
+              :src="row.staffPhoto"
+              alt=""
+              style="width:100px;height:100px;border-radius:50%;padding:10px"
+              @click="genQrCode(row.staffPhoto)"
+            >
+          </template>
+        </el-table-column>
         <el-table-column label="姓名" prop="username" />
         <el-table-column label="工号" prop="workNumber" />
         <el-table-column label="聘用形式" prop="formOfEmployment" :formatter="formatterFn" />
@@ -68,6 +82,18 @@
     </el-card>
     <!-- 新增员工 -->
     <add-employee :dialog-visible.sync="dialogVisible" />
+    <!-- 点击头像显示二维码弹层 -->
+    <el-dialog
+      title="提示"
+      :visible.sync="dialogVisibleQrCode"
+      width="50%"
+    >
+      <canvas ref="canvas" style="margin:0 auto;" />
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisibleQrCode = false">取 消</el-button>
+        <el-button type="primary" @click="dialogVisibleQrCode = false">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -77,6 +103,7 @@ import { getEmployeeList, delEmployee } from '@/api/employees'
 import EnumHireType from '@/api/constant/employees'
 import AddEmployee from './components/add-employee.vue'
 // console.log(EnumHireType)
+import QRCode from 'qrcode'
 export default {
   name: 'HrsaasIndex',
   components: {
@@ -93,7 +120,8 @@ export default {
       total: 0,
       loading: false,
       hireType: EnumHireType.hireType,
-      dialogVisible: false
+      dialogVisible: false,
+      dialogVisibleQrCode: false
     }
   },
   created() {
@@ -177,6 +205,20 @@ export default {
     },
     goDetail(row) {
       this.$router.push('/employees/detail/' + row.id)
+    },
+    genQrCode(staffPhoto) {
+      if (!staffPhoto) return this.$message.error('暂无头像')
+      // 数据同步视图是异步的
+      this.dialogVisibleQrCode = true
+      // console.log(QRCode)
+      // 等视图更新后触发
+      // 如果是同步会消耗性能，如果是同步的，数据更新视图更新，如果同时操作多个数据，一个数据变化会导致回流和重绘，会消耗性能
+      this.$nextTick(() => {
+        QRCode.toCanvas(this.$refs.canvas, staffPhoto, function(error) {
+          if (error) console.error(error)
+          console.log('success!')
+        })
+      })
     }
   }
 }

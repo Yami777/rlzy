@@ -1,5 +1,13 @@
 <template>
   <div class="job-info">
+    <div style="height:50px;">
+      <div style="float:right">
+        <i
+          class="el-icon-printer"
+          @click="$router.push('/employees/print/'+userId+'?type=job')"
+        />
+      </div>
+    </div>
     <!-- 基础信息 -->
     <el-form label-width="220px">
       <div class="block">
@@ -270,4 +278,6 @@ export default {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+
+</style>

@@ -39,7 +39,8 @@ Vue.use(ElementUI)
 
 Vue.use(components)
 Vue.config.productionTip = false
-
+import Print from 'vue-print-nb'
+Vue.use(Print)
 new Vue({
   el: '#app',
   router,
