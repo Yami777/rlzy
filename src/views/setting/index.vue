@@ -37,7 +37,7 @@
               width="240"
             >
               <template slot-scope="{row}">
-                <el-button size="small" type="success">分配权限</el-button>
+                <el-button size="small" type="success" @click="showSetPermission(row.id)">分配权限</el-button>
                 <el-button size="small" type="primary" @click="editRole(row)">编辑</el-button>
                 <el-button size="small" type="danger" @click="delRow(row.id)">删除</el-button>
               </template>
@@ -90,6 +90,11 @@
       </el-row>
     </el-card>
     <add-role ref="addRole" :dialog-visible.sync="dialogVisible" @refreshList="getRoleList" />
+    <!-- 分配权限弹层 -->
+    <set-permissions
+      :dialog-visible.sync="dialogVisibleSetPermission"
+      :role-id="roleId"
+    />
   </div>
 </template>
 
@@ -111,10 +116,12 @@
 import addRole from './components/addRole.vue'
 import { getRoleList, deleteRole, getCompanyInfo } from '@/api/setting'
 import { mapGetters } from 'vuex'
+import SetPermissions from './components/setPermission.vue'
 export default {
   name: 'HrsaasIndex',
   components: {
-    addRole
+    addRole,
+    SetPermissions
   },
   data() {
     return {
@@ -127,7 +134,9 @@ export default {
       roleList: [],
       loading: false,
       dialogVisible: false,
-      companyInfo: {}
+      dialogVisibleSetPermission: false,
+      companyInfo: {},
+      roleId: ''
     }
   },
   computed: {
@@ -149,8 +158,8 @@ export default {
           --this.page.page
           this.getRoleList()
         }
-      } catch (e) {
-        console.log(e)
+      } catch {
+        throw new Error()
       } finally {
         this.loading = false
       }
@@ -178,13 +187,18 @@ export default {
         // 刷新列表
         this.getRoleList()
       } catch (e) {
-        console.log(e)
+        // console.log(e)
+        this.$message.error('删除失败')
       }
     },
     // 获取公司信息
     async  getCompanyInfo() {
       this.companyInfo = await getCompanyInfo(this.companyId)
       // console.log(this.companyInfo)
+    },
+    showSetPermission(id) {
+      this.roleId = id
+      this.dialogVisibleSetPermission = true
     }
   }
 }

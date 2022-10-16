@@ -62,7 +62,7 @@
             <el-button type="text" size="small">转正</el-button>
             <el-button type="text" size="small">调岗</el-button>
             <el-button type="text" size="small">离职</el-button>
-            <el-button type="text" size="small">角色</el-button>
+            <el-button type="text" size="small" @click="showSetRole(row)">角色</el-button>
             <el-button type="text" size="small" @click="del(row)">删除</el-button>
           </template>
         </el-table-column>
@@ -94,6 +94,12 @@
         <el-button type="primary" @click="dialogVisibleQrCode = false">确 定</el-button>
       </span>
     </el-dialog>
+
+    <!-- 分配角色 -->
+    <assign-role
+      :dialog-visible-set-role.sync="dialogVisibleSetRole"
+      :user-id="currentId"
+    />
   </div>
 </template>
 
@@ -104,11 +110,13 @@ import EnumHireType from '@/api/constant/employees'
 import AddEmployee from './components/add-employee.vue'
 // console.log(EnumHireType)
 import QRCode from 'qrcode'
+import AssignRole from './components/assign-role.vue'
 export default {
   name: 'HrsaasIndex',
   components: {
     // PageTools
-    AddEmployee
+    AddEmployee,
+    AssignRole
   },
   data() {
     return {
@@ -121,7 +129,9 @@ export default {
       loading: false,
       hireType: EnumHireType.hireType,
       dialogVisible: false,
-      dialogVisibleQrCode: false
+      dialogVisibleQrCode: false,
+      dialogVisibleSetRole: false,
+      currentId: ''
     }
   },
   created() {
@@ -219,6 +229,11 @@ export default {
           console.log('success!')
         })
       })
+    },
+    showSetRole(row) {
+      // console.log(row)
+      this.currentId = row.id
+      this.dialogVisibleSetRole = true
     }
   }
 }

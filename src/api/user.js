@@ -32,4 +32,15 @@ export const saveUserDetailById = (data) => {
     data
   })
 }
-
+/**
+ * 给员工分配角色
+ * @param {Object} data 员工id和角色id
+ * @returns
+ */
+export const setEmployeesRoles = (data) => {
+  return request({
+    url: '/sys/user/assignRoles',
+    method: 'PUT',
+    data
+  })
+}
